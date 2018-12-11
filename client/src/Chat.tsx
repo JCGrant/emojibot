@@ -93,7 +93,7 @@ export default class Chat extends React.Component<{}, IChatState> {
     message: string,
     onResponse: (msg: IMessage) => void
   ) => {
-    fetch(`/predict?s=${message}`)
+    fetch(`/transform?s=${message}`)
       .then(res => res.text())
       .then(text => onResponse({ kind: 'received', name: 'bot', text }));
   };

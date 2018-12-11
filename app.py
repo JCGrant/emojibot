@@ -28,8 +28,8 @@ def perform_action(intent, entities):
         return put_favourite_emoji(entities)
     raise KeyError('Invalid intent: {}'.format(intent))
 
-@app.route("/predict")
-def predict():
+@app.route("/transform")
+def transform():
     sentence = request.args.get('s')
     if sentence is None or len(sentence) == 0:
         error('need a non-empty sentence')
