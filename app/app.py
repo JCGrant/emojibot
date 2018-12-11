@@ -4,7 +4,7 @@ from matcher import get_best_intent
 from predictor import run_prediction
 from util import emojify
 
-app = Flask(__name__, template_folder="client/build", static_folder="client/build/static")
+app = Flask(__name__, template_folder="../client/build", static_folder="../client/build/static")
 app.config['SECRET_KEY'] = "Super Secret"
 
 def error(message):

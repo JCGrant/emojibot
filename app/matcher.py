@@ -66,7 +66,7 @@ def match_score_for_regex(sentence, regex):
     return i, len_regex, all_entities
 
 def get_best_intent(sentence):
-    sentence = sentence.encode('unicode-escape'))
+    sentence = sentence.encode('unicode-escape')
     # Strip all punctuation
     sentence = sentence.translate(None, string.punctuation)
     sentence = sentence.lower()
