@@ -1,11 +1,9 @@
-from flask import Flask, request, abort, Response, render_template, session
+from flask import request, abort, Response, render_template, session
+from app import app
 from global_constants import *
 from matcher import get_best_intent
 from predictor import run_prediction
 from util import emojify
-
-app = Flask(__name__, template_folder="../client/build", static_folder="../client/build/static")
-app.config['SECRET_KEY'] = "Super Secret"
 
 def error(message):
     abort(Response(message, 400))
