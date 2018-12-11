@@ -23,6 +23,7 @@ batch_size = 32
 print('Loading model from {}.'.format(PRETRAINED_PATH))
 model = deepmoji_emojis(maxlen, PRETRAINED_PATH)
 model.summary()
+model._make_predict_function()
 
 print('Building tokenizer using dictionary from {}'.format(VOCAB_PATH))
 with open(VOCAB_PATH, 'r') as f:
@@ -33,7 +34,6 @@ st = SentenceTokenizer(vocabulary, maxlen)
 def run_predictions(sentences):
     tokenized, _, _ = st.tokenize_sentences(sentences)
 
-    print('Running predictions.')
     prob = model.predict(tokenized)
 
     # Find top emojis for each sentence. Emoji ids (0-63)
@@ -45,8 +45,8 @@ def run_predictions(sentences):
         t_score['sentence'] = s
         t_prob = prob[i]
         ind_top = top_elements(t_prob, 5)
-        t_score['ids'] = list(ind_top)
-        t_score['id_probs'] = list(t_prob[ind_top])
+        t_score['ids'] = ind_top.tolist()
+        t_score['id_probs'] = t_prob[ind_top].tolist()
         t_score['sum_id_probs'] = sum(t_prob[ind_top])
         scores.append(t_score)
     return scores
