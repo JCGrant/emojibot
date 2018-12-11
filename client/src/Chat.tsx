@@ -1,4 +1,5 @@
 import * as React from 'react';
+import Twemoji from 'react-twemoji';
 
 interface IMessage {
   kind: 'sent' | 'received';
@@ -17,12 +18,7 @@ export default class Chat extends React.Component<{}, IChatState> {
   constructor(props: {}) {
     super(props);
     this.state = {
-      messages: [
-        { kind: 'received', name: 'bot', text: 'BEEP BOOP' },
-        { kind: 'sent', name: 'user', text: 'Hey!' },
-        { kind: 'received', name: 'bot', text: 'BEEP BOOP' },
-        { kind: 'sent', name: 'user', text: 'Haha, nice!' },
-      ],
+      messages: [],
       userInput: '',
     };
   }
@@ -31,8 +27,18 @@ export default class Chat extends React.Component<{}, IChatState> {
     return (
       <div className="chat">
         <div className="messages">
-          {this.state.messages.map(msg => (
-            <div className={`message ${msg.kind}`}>{msg.text}</div>
+          {this.state.messages.map((msg, i) => (
+            <div key={i} className={`message ${msg.kind}`}>
+              <Twemoji
+                options={{
+                  className: 'twemoji',
+                  ext: '.svg',
+                  folder: 'svg',
+                }}
+              >
+                {msg.text}
+              </Twemoji>
+            </div>
           ))}
           <div ref={this.messagesEnd} />
         </div>
@@ -41,6 +47,7 @@ export default class Chat extends React.Component<{}, IChatState> {
           value={this.state.userInput}
           onChange={this.onChange}
           onKeyPress={this.onKeyDown}
+          placeholder="Type something..."
         />
       </div>
     );
@@ -53,22 +60,37 @@ export default class Chat extends React.Component<{}, IChatState> {
 
   private onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && this.state.userInput.length > 0) {
-      this.setState(
-        state => ({
-          messages: [
-            ...state.messages,
-            { kind: 'sent', name: 'user', text: this.state.userInput },
-          ],
-          userInput: '',
-        }),
-        () => {
-          this.messagesEnd.current!.scrollIntoView({
-            behavior: 'smooth',
-            block: 'nearest',
-            inline: 'start',
-          });
-        }
-      );
+      this.sendMessage(this.state.userInput, this.addMessage);
+      this.addMessage({
+        kind: 'sent',
+        name: 'user',
+        text: this.state.userInput,
+      });
+      this.setState({ userInput: '' });
     }
+  };
+
+  private addMessage = (message: IMessage) => {
+    this.setState(
+      state => ({
+        messages: [...state.messages, message],
+      }),
+      () => {
+        this.messagesEnd.current!.scrollIntoView({
+          behavior: 'smooth',
+          block: 'nearest',
+          inline: 'start',
+        });
+      }
+    );
+  };
+
+  private sendMessage = (
+    message: string,
+    onResponse: (msg: IMessage) => void
+  ) => {
+    fetch(`/predict?s=${message}`)
+      .then(res => res.text())
+      .then(text => onResponse({ kind: 'received', name: 'bot', text }));
   };
 }
