@@ -51,3 +51,5 @@ def run_predictions(sentences):
         scores.append(t_score)
     return scores
 
+def run_prediction(sentence):
+    return run_predictions([sentence])[0]
