@@ -12,6 +12,20 @@ interface IChatState {
   messages: IMessage[];
 }
 
+const Message = ({ kind, text }: IMessage) => (
+  <div className={`message ${kind}`}>
+    <Twemoji
+      options={{
+        className: 'twemoji',
+        ext: '.svg',
+        folder: 'svg',
+      }}
+    >
+      {text}
+    </Twemoji>
+  </div>
+);
+
 export default class Chat extends React.Component<{}, IChatState> {
   private messagesEnd = React.createRef<HTMLDivElement>();
 
@@ -28,17 +42,7 @@ export default class Chat extends React.Component<{}, IChatState> {
       <div className="chat">
         <div className="messages">
           {this.state.messages.map((msg, i) => (
-            <div key={i} className={`message ${msg.kind}`}>
-              <Twemoji
-                options={{
-                  className: 'twemoji',
-                  ext: '.svg',
-                  folder: 'svg',
-                }}
-              >
-                {msg.text}
-              </Twemoji>
-            </div>
+            <Message key={i} {...msg} />
           ))}
           <div ref={this.messagesEnd} />
         </div>
