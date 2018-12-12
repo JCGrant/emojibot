@@ -26,12 +26,14 @@ def regex_match(regex_kind):
     def matcher(word):
         match = regex_matchers[regex_kind].match(word)
         if match is None:
-            return False, None
-        return True, {regex_kind: match.group(0)}
+            return False, {}
+        return True, {regex_kind: [match.group(0)]}
     return matcher
 
 def regular_match(regex_tok):
     def matcher(word):
+        word = word.lower()
+        word = word.translate(None, string.punctuation)
         return word == regex_tok, {}
     return matcher
 
@@ -44,9 +46,9 @@ def get_matcher(regex_tok):
 def add_entity(entities, new_entities):
     for k, v in new_entities.iteritems():
         if k in entities:
-            entities[k].append(v)
+            entities[k].extend(v)
         else:
-            entities[k] = [v]
+            entities[k] = v
     return entities
 
 def match_score_for_regex(sentence, regex):
@@ -67,9 +69,6 @@ def match_score_for_regex(sentence, regex):
 
 def get_best_intent(sentence):
     sentence = sentence.encode('unicode-escape')
-    # Strip all punctuation
-    sentence = sentence.translate(None, string.punctuation)
-    sentence = sentence.lower()
     best_score = 0
     best_intent = None
     best_length = 0
