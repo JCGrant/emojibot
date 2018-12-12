@@ -12,6 +12,9 @@ interface IChatState {
   messages: IMessage[];
 }
 
+/**
+ * Uses Twemoji to render the Emojis in a more pleasing manner.
+ */
 const Message = ({ kind, text }: IMessage) => (
   <div className={`message ${kind}`}>
     <Twemoji
@@ -26,6 +29,9 @@ const Message = ({ kind, text }: IMessage) => (
   </div>
 );
 
+/**
+ * A Chat component with messages, user input, and a connection to a server.
+ */
 export default class Chat extends React.Component<{}, IChatState> {
   private messagesEnd = React.createRef<HTMLDivElement>();
 
@@ -57,11 +63,18 @@ export default class Chat extends React.Component<{}, IChatState> {
     );
   }
 
+  /**
+   * Allows us to use the userInput in onKeyDown
+   */
   private onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const userInput = e.target.value;
     this.setState({ userInput });
   };
 
+  /**
+   * When the user press Enter, we create a new message (if it's non-empty), and send
+   * it to the server.
+   */
   private onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && this.state.userInput.length > 0) {
       this.sendMessage(this.state.userInput, this.addMessage);
@@ -74,6 +87,9 @@ export default class Chat extends React.Component<{}, IChatState> {
     }
   };
 
+  /**
+   * Appends a message to the state and scrolls the window down to view it.
+   */
   private addMessage = (message: IMessage) => {
     this.setState(
       state => ({
@@ -89,6 +105,9 @@ export default class Chat extends React.Component<{}, IChatState> {
     );
   };
 
+  /**
+   * Sends a message to the server and calls onResponse on the resulting text.
+   */
   private sendMessage = (
     message: string,
     onResponse: (msg: IMessage) => void

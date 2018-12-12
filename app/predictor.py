@@ -13,6 +13,12 @@ from deepmoji.global_variables import PRETRAINED_PATH, VOCAB_PATH
 
 
 def top_elements(array, k):
+    """Returns the indexes of the k largest elements.
+
+    It descends in the order of the elements, not the indexes
+
+    e.g. top_elements([3, 2, 1, 10, 11], 4) => [4, 3, 0, 1]
+    """
     ind = np.argpartition(array, -k)[-k:]
     return ind[np.argsort(array[ind])][::-1]
 
@@ -32,6 +38,11 @@ st = SentenceTokenizer(vocabulary, maxlen)
 
 
 def run_predictions(sentences):
+    """Runs the models over the sentences returning a t_score for each sentence.
+
+    A t_score gives the ids for the top 5 emojis, the confidence of each emoji, and the sum
+    of the confidences.
+    """
     tokenized, _, _ = st.tokenize_sentences(sentences)
 
     prob = model.predict(tokenized)
@@ -52,4 +63,5 @@ def run_predictions(sentences):
     return scores
 
 def run_prediction(sentence):
+    """Helper function for running only one prediction for one sentence."""
     return run_predictions([sentence])[0]
